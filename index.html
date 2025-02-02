@@ -1,0 +1,1029 @@
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=utf-8"/><title>온라인 스토어 데이터 분석 + 분석 과정</title><style>
+/* cspell:disable-file */
+/* webkit printing magic: print all background colors */
+html {
+	-webkit-print-color-adjust: exact;
+}
+* {
+	box-sizing: border-box;
+	-webkit-print-color-adjust: exact;
+}
+
+html,
+body {
+	margin: 30px;
+	padding: 0;
+}
+@media only screen {
+	body {
+		margin: 2em auto;
+		max-width: 900px;
+		color: rgb(55, 53, 47);
+	}
+}
+
+body {
+	line-height: 1.5;
+	white-space: pre-wrap;
+}
+
+a,
+a.visited {
+	color: inherit;
+	text-decoration: underline;
+}
+
+.pdf-relative-link-path {
+	font-size: 80%;
+	color: #444;
+}
+
+h1,
+h2,
+h3 {
+	letter-spacing: -0.01em;
+	line-height: 1.2;
+	font-weight: 600;
+	margin-bottom: 0;
+}
+
+.page-title {
+	font-size: 2.5rem;
+	font-weight: 700;
+	margin-top: 0;
+	margin-bottom: 0.75em;
+}
+
+h1 {
+	font-size: 1.875rem;
+	margin-top: 1.875rem;
+}
+
+h2 {
+	font-size: 1.5rem;
+	margin-top: 1.5rem;
+}
+
+h3 {
+	font-size: 1.25rem;
+	margin-top: 1.25rem;
+}
+
+.source {
+	border: 1px solid #ddd;
+	border-radius: 3px;
+	padding: 1.5em;
+	word-break: break-all;
+}
+
+.callout {
+	border-radius: 3px;
+	padding: 1rem;
+}
+
+figure {
+	margin: 1.25em 0;
+	page-break-inside: avoid;
+}
+
+figcaption {
+	opacity: 0.5;
+	font-size: 85%;
+	margin-top: 0.5em;
+}
+
+mark {
+	background-color: transparent;
+}
+
+.indented {
+	padding-left: 1.5em;
+}
+
+hr {
+	background: transparent;
+	display: block;
+	width: 100%;
+	height: 1px;
+	visibility: visible;
+	border: none;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.09);
+}
+
+img {
+	max-width: 100%;
+}
+
+@media only print {
+	img {
+		max-height: 100vh;
+		object-fit: contain;
+	}
+}
+
+@page {
+	margin: 1in;
+}
+
+.collection-content {
+	font-size: 0.875rem;
+}
+
+.column-list {
+	display: flex;
+	justify-content: space-between;
+}
+
+.column {
+	padding: 0 1em;
+}
+
+.column:first-child {
+	padding-left: 0;
+}
+
+.column:last-child {
+	padding-right: 0;
+}
+
+.table_of_contents-item {
+	display: block;
+	font-size: 0.875rem;
+	line-height: 1.3;
+	padding: 0.125rem;
+}
+
+.table_of_contents-indent-1 {
+	margin-left: 1.5rem;
+}
+
+.table_of_contents-indent-2 {
+	margin-left: 3rem;
+}
+
+.table_of_contents-indent-3 {
+	margin-left: 4.5rem;
+}
+
+.table_of_contents-link {
+	text-decoration: none;
+	opacity: 0.7;
+	border-bottom: 1px solid rgba(55, 53, 47, 0.18);
+}
+
+table,
+th,
+td {
+	border: 1px solid rgba(55, 53, 47, 0.09);
+	border-collapse: collapse;
+}
+
+table {
+	border-left: none;
+	border-right: none;
+}
+
+th,
+td {
+	font-weight: normal;
+	padding: 0.25em 0.5em;
+	line-height: 1.5;
+	min-height: 1.5em;
+	text-align: left;
+}
+
+th {
+	color: rgba(55, 53, 47, 0.6);
+}
+
+ol,
+ul {
+	margin: 0;
+	margin-block-start: 0.6em;
+	margin-block-end: 0.6em;
+}
+
+li > ol:first-child,
+li > ul:first-child {
+	margin-block-start: 0.6em;
+}
+
+ul > li {
+	list-style: disc;
+}
+
+ul.to-do-list {
+	padding-inline-start: 0;
+}
+
+ul.to-do-list > li {
+	list-style: none;
+}
+
+.to-do-children-checked {
+	text-decoration: line-through;
+	opacity: 0.375;
+}
+
+ul.toggle > li {
+	list-style: none;
+}
+
+ul {
+	padding-inline-start: 1.7em;
+}
+
+ul > li {
+	padding-left: 0.1em;
+}
+
+ol {
+	padding-inline-start: 1.6em;
+}
+
+ol > li {
+	padding-left: 0.2em;
+}
+
+.mono ol {
+	padding-inline-start: 2em;
+}
+
+.mono ol > li {
+	text-indent: -0.4em;
+}
+
+.toggle {
+	padding-inline-start: 0em;
+	list-style-type: none;
+}
+
+/* Indent toggle children */
+.toggle > li > details {
+	padding-left: 1.7em;
+}
+
+.toggle > li > details > summary {
+	margin-left: -1.1em;
+}
+
+.selected-value {
+	display: inline-block;
+	padding: 0 0.5em;
+	background: rgba(206, 205, 202, 0.5);
+	border-radius: 3px;
+	margin-right: 0.5em;
+	margin-top: 0.3em;
+	margin-bottom: 0.3em;
+	white-space: nowrap;
+}
+
+.collection-title {
+	display: inline-block;
+	margin-right: 1em;
+}
+
+.page-description {
+	margin-bottom: 2em;
+}
+
+.simple-table {
+	margin-top: 1em;
+	font-size: 0.875rem;
+	empty-cells: show;
+}
+.simple-table td {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table th {
+	height: 29px;
+	min-width: 120px;
+}
+
+.simple-table-header-color {
+	background: rgb(247, 246, 243);
+	color: black;
+}
+.simple-table-header {
+	font-weight: 500;
+}
+
+time {
+	opacity: 0.5;
+}
+
+.icon {
+	display: inline-block;
+	max-width: 1.2em;
+	max-height: 1.2em;
+	text-decoration: none;
+	vertical-align: text-bottom;
+	margin-right: 0.5em;
+}
+
+img.icon {
+	border-radius: 3px;
+}
+
+.user-icon {
+	width: 1.5em;
+	height: 1.5em;
+	border-radius: 100%;
+	margin-right: 0.5rem;
+}
+
+.user-icon-inner {
+	font-size: 0.8em;
+}
+
+.text-icon {
+	border: 1px solid #000;
+	text-align: center;
+}
+
+.page-cover-image {
+	display: block;
+	object-fit: cover;
+	width: 100%;
+	max-height: 30vh;
+}
+
+.page-header-icon {
+	font-size: 3rem;
+	margin-bottom: 1rem;
+}
+
+.page-header-icon-with-cover {
+	margin-top: -0.72em;
+	margin-left: 0.07em;
+}
+
+.page-header-icon img {
+	border-radius: 3px;
+}
+
+.link-to-page {
+	margin: 1em 0;
+	padding: 0;
+	border: none;
+	font-weight: 500;
+}
+
+p > .user {
+	opacity: 0.5;
+}
+
+td > .user,
+td > time {
+	white-space: nowrap;
+}
+
+input[type="checkbox"] {
+	transform: scale(1.5);
+	margin-right: 0.6em;
+	vertical-align: middle;
+}
+
+p {
+	margin-top: 0.5em;
+	margin-bottom: 0.5em;
+}
+
+.image {
+	border: none;
+	margin: 1.5em 0;
+	padding: 0;
+	border-radius: 0;
+	text-align: center;
+}
+
+.code,
+code {
+	background: rgba(135, 131, 120, 0.15);
+	border-radius: 3px;
+	padding: 0.2em 0.4em;
+	border-radius: 3px;
+	font-size: 85%;
+	tab-size: 2;
+}
+
+code {
+	color: #eb5757;
+}
+
+.code {
+	padding: 1.5em 1em;
+}
+
+.code-wrap {
+	white-space: pre-wrap;
+	word-break: break-all;
+}
+
+.code > code {
+	background: none;
+	padding: 0;
+	font-size: 100%;
+	color: inherit;
+}
+
+blockquote {
+	font-size: 1.25em;
+	margin: 1em 0;
+	padding-left: 1em;
+	border-left: 3px solid rgb(55, 53, 47);
+}
+
+.bookmark {
+	text-decoration: none;
+	max-height: 8em;
+	padding: 0;
+	display: flex;
+	width: 100%;
+	align-items: stretch;
+}
+
+.bookmark-title {
+	font-size: 0.85em;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	height: 1.75em;
+	white-space: nowrap;
+}
+
+.bookmark-text {
+	display: flex;
+	flex-direction: column;
+}
+
+.bookmark-info {
+	flex: 4 1 180px;
+	padding: 12px 14px 14px;
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
+
+.bookmark-image {
+	width: 33%;
+	flex: 1 1 180px;
+	display: block;
+	position: relative;
+	object-fit: cover;
+	border-radius: 1px;
+}
+
+.bookmark-description {
+	color: rgba(55, 53, 47, 0.6);
+	font-size: 0.75em;
+	overflow: hidden;
+	max-height: 4.5em;
+	word-break: break-word;
+}
+
+.bookmark-href {
+	font-size: 0.75em;
+	margin-top: 0.25em;
+}
+
+.sans { font-family: ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol"; }
+.code { font-family: "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace; }
+.serif { font-family: Lyon-Text, Georgia, ui-serif, serif; }
+.mono { font-family: iawriter-mono, Nitti, Menlo, Courier, monospace; }
+.pdf .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK JP'; }
+.pdf:lang(zh-CN) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK SC'; }
+.pdf:lang(zh-TW) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK TC'; }
+.pdf:lang(ko-KR) .sans { font-family: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI Variable Display", "Segoe UI", Helvetica, "Apple Color Emoji", Arial, sans-serif, "Segoe UI Emoji", "Segoe UI Symbol", 'Twemoji', 'Noto Color Emoji', 'Noto Sans CJK KR'; }
+.pdf .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .code { font-family: Source Code Pro, "SFMono-Regular", Menlo, Consolas, "PT Mono", "Liberation Mono", Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.pdf .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK JP'; }
+.pdf:lang(zh-CN) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK SC'; }
+.pdf:lang(zh-TW) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK TC'; }
+.pdf:lang(ko-KR) .serif { font-family: PT Serif, Lyon-Text, Georgia, ui-serif, serif, 'Twemoji', 'Noto Color Emoji', 'Noto Serif CJK KR'; }
+.pdf .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK JP'; }
+.pdf:lang(zh-CN) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK SC'; }
+.pdf:lang(zh-TW) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK TC'; }
+.pdf:lang(ko-KR) .mono { font-family: PT Mono, iawriter-mono, Nitti, Menlo, Courier, monospace, 'Twemoji', 'Noto Color Emoji', 'Noto Sans Mono CJK KR'; }
+.highlight-default {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.highlight-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.highlight-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.highlight-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.highlight-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.highlight-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.highlight-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.highlight-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.highlight-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.highlight-default_background {
+	color: rgba(55, 53, 47, 1);
+}
+.highlight-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.highlight-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.highlight-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.highlight-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.highlight-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.highlight-blue_background {
+	background: rgba(231, 243, 248, 1);
+}
+.highlight-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.highlight-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.highlight-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.block-color-default {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray {
+	color: rgba(120, 119, 116, 1);
+	fill: rgba(120, 119, 116, 1);
+}
+.block-color-brown {
+	color: rgba(159, 107, 83, 1);
+	fill: rgba(159, 107, 83, 1);
+}
+.block-color-orange {
+	color: rgba(217, 115, 13, 1);
+	fill: rgba(217, 115, 13, 1);
+}
+.block-color-yellow {
+	color: rgba(203, 145, 47, 1);
+	fill: rgba(203, 145, 47, 1);
+}
+.block-color-teal {
+	color: rgba(68, 131, 97, 1);
+	fill: rgba(68, 131, 97, 1);
+}
+.block-color-blue {
+	color: rgba(51, 126, 169, 1);
+	fill: rgba(51, 126, 169, 1);
+}
+.block-color-purple {
+	color: rgba(144, 101, 176, 1);
+	fill: rgba(144, 101, 176, 1);
+}
+.block-color-pink {
+	color: rgba(193, 76, 138, 1);
+	fill: rgba(193, 76, 138, 1);
+}
+.block-color-red {
+	color: rgba(212, 76, 71, 1);
+	fill: rgba(212, 76, 71, 1);
+}
+.block-color-default_background {
+	color: inherit;
+	fill: inherit;
+}
+.block-color-gray_background {
+	background: rgba(241, 241, 239, 1);
+}
+.block-color-brown_background {
+	background: rgba(244, 238, 238, 1);
+}
+.block-color-orange_background {
+	background: rgba(251, 236, 221, 1);
+}
+.block-color-yellow_background {
+	background: rgba(251, 243, 219, 1);
+}
+.block-color-teal_background {
+	background: rgba(237, 243, 236, 1);
+}
+.block-color-blue_background {
+	background: rgba(231, 243, 248, 1);
+	padding: 8px;
+}
+.block-color-purple_background {
+	background: rgba(244, 240, 247, 0.8);
+}
+.block-color-pink_background {
+	background: rgba(249, 238, 243, 0.8);
+}
+.block-color-red_background {
+	background: rgba(253, 235, 236, 1);
+}
+.select-value-color-uiBlue { background-color: rgba(35, 131, 226, .07); }
+.select-value-color-pink { background-color: rgba(245, 224, 233, 1); }
+.select-value-color-purple { background-color: rgba(232, 222, 238, 1); }
+.select-value-color-green { background-color: rgba(219, 237, 219, 1); }
+.select-value-color-gray { background-color: rgba(227, 226, 224, 1); }
+.select-value-color-transparentGray { background-color: rgba(227, 226, 224, 0); }
+.select-value-color-translucentGray { background-color: rgba(0, 0, 0, 0.06); }
+.select-value-color-orange { background-color: rgba(250, 222, 201, 1); }
+.select-value-color-brown { background-color: rgba(238, 224, 218, 1); }
+.select-value-color-red { background-color: rgba(255, 226, 221, 1); }
+.select-value-color-yellow { background-color: rgba(253, 236, 200, 1); }
+.select-value-color-blue { background-color: rgba(211, 229, 239, 1); }
+.select-value-color-pageGlass { background-color: undefined; }
+.select-value-color-washGlass { background-color: undefined; }
+
+.checkbox {
+	display: inline-flex;
+	vertical-align: text-bottom;
+	width: 16;
+	height: 16;
+	background-size: 16px;
+	margin-left: 2px;
+	margin-right: 5px;
+}
+
+.checkbox-on {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20width%3D%2216%22%20height%3D%2216%22%20fill%3D%22%2358A9D7%22%2F%3E%0A%3Cpath%20d%3D%22M6.71429%2012.2852L14%204.9995L12.7143%203.71436L6.71429%209.71378L3.28571%206.2831L2%207.57092L6.71429%2012.2852Z%22%20fill%3D%22white%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+
+.checkbox-off {
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg%20width%3D%2216%22%20height%3D%2216%22%20viewBox%3D%220%200%2016%2016%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%0A%3Crect%20x%3D%220.75%22%20y%3D%220.75%22%20width%3D%2214.5%22%20height%3D%2214.5%22%20fill%3D%22white%22%20stroke%3D%22%2336352F%22%20stroke-width%3D%221.5%22%2F%3E%0A%3C%2Fsvg%3E");
+}
+	
+</style></head><body><article id="188a0841-2618-8038-8312-ce76b11bab93" class="page sans"><header><h1 class="page-title">온라인 스토어 데이터 분석 + 분석 과정</h1><p class="page-description"></p><table class="properties"><tbody><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>Tools</th><td><span class="selected-value select-value-color-brown">Python</span><span class="selected-value select-value-color-green">Tableau</span></td></tr><tr class="property-row property-row-multi_select"><th><span class="icon property-icon"><svg role="graphics-symbol" viewBox="0 0 16 16" style="width:14px;height:14px;display:block;fill:rgba(55, 53, 47, 0.45);flex-shrink:0" class="typesMultipleSelect"><path d="M1.91602 4.83789C2.44238 4.83789 2.87305 4.40723 2.87305 3.87402C2.87305 3.34766 2.44238 2.91699 1.91602 2.91699C1.38281 2.91699 0.952148 3.34766 0.952148 3.87402C0.952148 4.40723 1.38281 4.83789 1.91602 4.83789ZM5.1084 4.52344H14.3984C14.7607 4.52344 15.0479 4.23633 15.0479 3.87402C15.0479 3.51172 14.7607 3.22461 14.3984 3.22461H5.1084C4.74609 3.22461 4.45898 3.51172 4.45898 3.87402C4.45898 4.23633 4.74609 4.52344 5.1084 4.52344ZM1.91602 9.03516C2.44238 9.03516 2.87305 8.60449 2.87305 8.07129C2.87305 7.54492 2.44238 7.11426 1.91602 7.11426C1.38281 7.11426 0.952148 7.54492 0.952148 8.07129C0.952148 8.60449 1.38281 9.03516 1.91602 9.03516ZM5.1084 8.7207H14.3984C14.7607 8.7207 15.0479 8.43359 15.0479 8.07129C15.0479 7.70898 14.7607 7.42188 14.3984 7.42188H5.1084C4.74609 7.42188 4.45898 7.70898 4.45898 8.07129C4.45898 8.43359 4.74609 8.7207 5.1084 8.7207ZM1.91602 13.2324C2.44238 13.2324 2.87305 12.8018 2.87305 12.2686C2.87305 11.7422 2.44238 11.3115 1.91602 11.3115C1.38281 11.3115 0.952148 11.7422 0.952148 12.2686C0.952148 12.8018 1.38281 13.2324 1.91602 13.2324ZM5.1084 12.918H14.3984C14.7607 12.918 15.0479 12.6309 15.0479 12.2686C15.0479 11.9062 14.7607 11.6191 14.3984 11.6191H5.1084C4.74609 11.6191 4.45898 11.9062 4.45898 12.2686C4.45898 12.6309 4.74609 12.918 5.1084 12.918Z"></path></svg></span>데이터 출처</th><td><span class="selected-value select-value-color-orange">UCI Repository</span></td></tr><tr class="property-row property-row-text"><th><span class="icon property-icon"><img src="https://www.notion.so/icons/link_gray.svg" style="width:14px;height:14px;display:block"/></span>코드보기 (github)</th><td>보고서 內 포함</td></tr></tbody></table></header><div class="page-body"><h1 id="188a0841-2618-8022-ac6a-cf79daff0473" class="block-color-blue_background">  프로젝트 개요</h1><figure id="18ea0841-2618-80db-81e7-da7c770322b2" class="image"><a href="image.png"><img style="width:626px" src="images/image.png"/></a></figure><p id="18ea0841-2618-80c9-8f8d-ee5158e9452f" class="">
+</p><h2 id="188a0841-2618-807e-a110-db47118c13bf" class="">목표</h2><ul id="188a0841-2618-80bb-b787-df6dbe43be02" class="bulleted-list"><li style="list-style-type:disc"><strong>스토어 운영 최적화</strong><ul id="188a0841-2618-80d8-b6e6-fccd3fe78c5e" class="bulleted-list"><li style="list-style-type:circle">재고 관리를 포함한 효율적인 운영 방안 모색</li></ul><ul id="188a0841-2618-801e-b0d6-fc7a6cb37096" class="bulleted-list"><li style="list-style-type:circle">구매 트렌드 분석을 통한 운영 전략 개선</li></ul><ul id="188a0841-2618-80be-82af-cfc22e0e8f5b" class="bulleted-list"><li style="list-style-type:circle">이상치(Outlier)를 더 잘 이해하고 대응</li></ul></li></ul><ul id="188a0841-2618-8050-b5fc-ea60c1dbd21f" class="bulleted-list"><li style="list-style-type:disc"><strong>고객 만족도 개선</strong><ul id="188a0841-2618-806d-a908-c01fb81f101e" class="bulleted-list"><li style="list-style-type:circle">반품된 상품에 대해 심층 분석하여 개선 방안 도출</li></ul><ul id="188a0841-2618-8015-a638-d51f6137c0c1" class="bulleted-list"><li style="list-style-type:circle">고객 경험 향상을 위한 데이터 기반 접근</li></ul></li></ul><p id="188a0841-2618-8058-b0ae-df1b5a3b554d" class="">
+</p><h2 id="188a0841-2618-80e7-b883-e2ffd56163c2" class="">데이터 세트 개요</h2><p id="188a0841-2618-80d8-bf98-cad2502e937a" class="">: 약 541,000건의 온라인 스토어에서 발생된 거래 데이터</p><ul id="188a0841-2618-8088-92fb-d6e91c0c2c02" class="bulleted-list"><li style="list-style-type:disc"><strong>InvoiceNo</strong> ㅡ 여러 품목이 함께 구매될 때 사용되는 고유 식별자</li></ul><ul id="188a0841-2618-8020-8aae-db01d4591348" class="bulleted-list"><li style="list-style-type:disc"><strong>StockCode</strong> ㅡ 제품을 나타내는 고유 식별자</li></ul><ul id="188a0841-2618-80ab-b246-f6cc601aedc4" class="bulleted-list"><li style="list-style-type:disc"><strong>Description</strong> ㅡ  제품에 대한 설명</li></ul><ul id="188a0841-2618-803f-95d8-dee13d29ca42" class="bulleted-list"><li style="list-style-type:disc"><strong>Quantity</strong> ㅡ  구매된 제품의 수량</li></ul><ul id="188a0841-2618-80a6-87b1-f6c76588de63" class="bulleted-list"><li style="list-style-type:disc"><strong>InvoiceDate</strong> ㅡ 구매 시 발행된 송장 날짜 및 시간</li></ul><ul id="188a0841-2618-8049-be5c-d660a924c868" class="bulleted-list"><li style="list-style-type:disc"><strong>UnitPrice</strong> ㅡ 제품 1개당 가격</li></ul><ul id="188a0841-2618-8016-8de9-ce8beb6756f4" class="bulleted-list"><li style="list-style-type:disc"><strong>CustomerID</strong> ㅡ 고객을 나타내는 고유 식별자</li></ul><ul id="188a0841-2618-80a5-ad1c-e9666d8332b4" class="bulleted-list"><li style="list-style-type:disc"><strong>Country</strong> ㅡ 제품이 구매된 국가</li></ul><p id="188a0841-2618-80d8-945e-d672a47ec3ca" class="">
+</p><p id="188a0841-2618-80e0-a77f-f7891a42c33a" class="">
+</p><p id="188a0841-2618-802e-82eb-f082c2a2c640" class="">
+</p><p id="188a0841-2618-8034-b452-f8d947e8a1f4" class="">
+</p><h1 id="188a0841-2618-8071-a4f0-d8c42e323065" class="block-color-blue_background">  데이터 탐색 및 분석</h1><h2 id="188a0841-2618-80af-b3b7-eb715b237a22" class="">결측치 탐색</h2><ul id="18ea0841-2618-8061-93e8-ea6fd59d90d1" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80eb-abad-fbe29e494d30" class="code"><code class="language-Python"># 1.1 결측치 탐색
+missing_vals = data.isna().sum()
+
+print(&quot;[변수별 결측치 개수]&quot;)
+print(missing_vals)</code></pre></details></li></ul><ul id="18ea0841-2618-8096-b4ad-d4fcacd3b0c4" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8031-979b-dd6c2cd8c70d" class="code"><code class="language-Plain Text">[변수별 결측치 개수]
+InvoiceNo           0
+StockCode           0
+Description      1454
+Quantity            0
+InvoiceDate         0
+UnitPrice           0
+CustomerID     135080
+Country             0
+dtype: int64</code></pre></details></li></ul><p id="188a0841-2618-80a1-a2ee-e7f76c0d8bc6" class="">
+</p><ul id="188a0841-2618-8042-8132-d0b9ba99652c" class="bulleted-list"><li style="list-style-type:disc">총 데이터는 <strong>541,909행</strong>으로, 누락된 제품 설명(Description)은 무시할 수 있을 정도로 적음</li></ul><ul id="188a0841-2618-8069-a9aa-ceb75229d1ed" class="bulleted-list"><li style="list-style-type:disc">하지만, CustomerID의 누락은 전체 데이터의 약 25%를 차지함</li></ul><ul id="188a0841-2618-8040-bb66-c55ed78080cf" class="bulleted-list"><li style="list-style-type:disc">이후 분석에서 <strong>알려진 Customer ID</strong>(회원)와 <strong>알려지지 않은 Customer ID</strong>(비회원) 간의 행동 차이를 비교해 이해할 예정</li></ul><p id="18ba0841-2618-807d-8279-fb6adc4bf60c" class="">
+</p><p id="189a0841-2618-80c0-b9a7-e09a77c03aac" class="">
+</p><p id="189a0841-2618-80e0-8c67-d9a2c3e5cf7b" class="">
+</p><hr id="188a0841-2618-8041-821f-df9bcde6ae30"/><p id="189a0841-2618-80a7-ba65-cf1824b18fde" class="">
+</p><h2 id="188a0841-2618-805f-8e59-dacc8194d344" class="">이상치 탐색</h2><ul id="18ea0841-2618-8007-a717-f698de328d28" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8023-a5b3-caf34b5ccddf" class="code"><code class="language-Python"># 1.2 이상치 처리
+# Sales 계산 = Quantity * UnitPrice
+data[&#x27;Sales&#x27;] = data[&#x27;Quantity&#x27;] * data[&#x27;UnitPrice&#x27;]
+
+# IQR 범위
+Q1 = data[&#x27;Sales&#x27;].quantile(0.25)
+Q3 = data[&#x27;Sales&#x27;].quantile(0.75)
+IQR = Q3-Q1
+
+# 아웃라이어 판단 범위
+lower_bound = Q1-1.5*IQR
+upper_bound = Q3+1.5*IQR
+
+# 아웃라이어 식별
+sales_outlier = data[(data[&#x27;Sales&#x27;] &lt; lower_bound) | (data[&#x27;Sales&#x27;] &gt; upper_bound)]
+
+# 박스플롯
+_ = plt.figure(figsize=(6, 3))
+_ = sns.boxplot(x=data[&#x27;Sales&#x27;])
+_ = plt.title(&#x27;Sales Boxplot&#x27;, weight=&#x27;bold&#x27;)
+
+# x축 값에 쉼표 추가 포맷 설정 및 틱 간격 설정
+_ = plt.gca().xaxis.set_major_formatter(plt.FuncFormatter(lambda x, _: f&#x27;{int(x):,}&#x27;))
+_ = plt.gca().xaxis.set_major_locator(plt.MultipleLocator(50000))  # 50,000 간격 설정</code></pre></details></li></ul><ul id="18ea0841-2618-804f-9d70-c4c5747162b5" class="toggle"><li><details open=""><summary>출력 결과</summary><figure id="188a0841-2618-80d9-a1de-d42f4f09d824" class="image" style="text-align:left"><a href="image%201.png"><img style="width:484px" src="images/image%201.png"/></a></figure></details></li></ul><ul id="188a0841-2618-80b8-80a0-f8f20e70e6a4" class="bulleted-list"><li style="list-style-type:disc">이상치는 데이터 세트에 대해 더 많은 정보를 제공할 수 있음</li></ul><ul id="188a0841-2618-8033-901e-d916c6c79b93" class="bulleted-list"><li style="list-style-type:disc">이 데이터에서 판매 이상치(Quantity * UnitPrice로 계산)는 대부분 큰 <strong>음수값</strong>으로 나타남<ul id="188a0841-2618-8033-90f1-cf98eec725d7" class="bulleted-list"><li style="list-style-type:circle">이는 취소된 주문(반품) 등을 나타내는 것으로 보임</li></ul></li></ul><p id="188a0841-2618-80f0-b70b-e79a0c56bf4f" class="">
+</p><p id="188a0841-2618-80ae-aec1-ea2090b7395d" class="">
+</p><p id="188a0841-2618-8047-a656-ff49e92ce31a" class=""><strong>(-) 음수 값을 가지는 거래에 대해 품목별 매출량을 집계</strong></p><ul id="18ea0841-2618-8096-8ae7-ebd41959c68f" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8029-8443-c527219cb27d" class="code"><code class="language-Python"># Description별 Sales 합계 계산 및 정렬
+top_negative_sales = data[data[&#x27;Sales&#x27;] &lt; 0].groupby(&#x27;Description&#x27;, as_index=False)[&#x27;Sales&#x27;].sum().sort_values(by=&#x27;Sales&#x27;, ascending=True).head(20)
+
+# 그래프 생성
+_ = plt.figure(figsize=(4,6))
+_ = sns.barplot(data=top_negative_sales, y=&#x27;Description&#x27;, x=&#x27;Sales&#x27;)
+_ = plt.gca().invert_xaxis()
+_ = plt.title(&#x27;Top20 Description별 음수 매출량&#x27;, weight=&#x27;bold&#x27;, loc=&#x27;left&#x27;)</code></pre></details></li></ul><ul id="18ea0841-2618-80e0-b514-d824722c392a" class="toggle"><li><details open=""><summary>출력 결과</summary><figure id="188a0841-2618-805d-a88c-defa0c35478a" class="image" style="text-align:left"><a href="image%202.png"><img style="width:576px" src="images/image%202.png"/></a></figure></details></li></ul><p id="188a0841-2618-8009-868f-e5ec1cd9bf2c" class="">
+</p><ul id="188a0841-2618-8092-aa62-dd994f09a14c" class="bulleted-list"><li style="list-style-type:disc">반품된 품목들 중 거래와 관련 없는 Descriptions(품목) 발견 → 이는 분석 대상에서 제외<ul id="188a0841-2618-8028-a101-e670ef7dca84" class="bulleted-list"><li style="list-style-type:circle">Amazon fees</li></ul><ul id="188a0841-2618-801b-92b5-d8b8a2aa3a96" class="bulleted-list"><li style="list-style-type:circle">Manual (아마 직접 수동으로 처리된 조정)</li></ul><ul id="188a0841-2618-80e2-a762-c8d01f371e17" class="bulleted-list"><li style="list-style-type:circle">Adjust bad debt (부실 매출 채권 조정?)</li></ul><ul id="188a0841-2618-8084-9625-d428da1f4c38" class="bulleted-list"><li style="list-style-type:circle">CRUNK Commision (CRUNK 수수료)</li></ul><ul id="188a0841-2618-804a-87f6-f8fe343e192c" class="bulleted-list"><li style="list-style-type:circle">Bacnk Charges (은행 관련 지급 비용)</li></ul><ul id="188a0841-2618-8004-9255-ee6fc9071449" class="bulleted-list"><li style="list-style-type:circle">Discount</li></ul><ul id="188a0841-2618-80a6-a01d-ea2e65654aae" class="bulleted-list"><li style="list-style-type:circle">SAMPLES</li></ul></li></ul><p id="188a0841-2618-80d7-a0bd-d66c174e9993" class="">
+</p><p id="18ba0841-2618-80df-9d26-fc43df872ef8" class="">
+</p><p id="189a0841-2618-80ab-b68d-e9e87ab6ccf4" class="">
+</p><hr id="188a0841-2618-801b-a32f-c5bc79437a79"/><p id="188a0841-2618-808c-8a16-e7b70a46656f" class="">
+</p><h2 id="188a0841-2618-8000-bc77-cf20302bbdcc" class="">반품(주문 취소)된 거래 탐색</h2><ul id="188a0841-2618-8068-9f61-d425da47db67" class="bulleted-list"><li style="list-style-type:disc">반품된 주문과 관련하여 던질 수 있는 질문:<ul id="188a0841-2618-80bc-921c-c9aa08485e5f" class="bulleted-list"><li style="list-style-type:circle">반품 비율이 가장 높은 품목은 무엇인가? 왜 그런가?</li></ul><ul id="188a0841-2618-804d-94bd-f23c4480bbe3" class="bulleted-list"><li style="list-style-type:circle">매출에 가장 부정적인 영향을 미친 품목은 무엇인가?</li></ul></li></ul><p id="188a0841-2618-8015-bfbb-f9e2dc711fc9" class="">
+</p><h3 id="188a0841-2618-802d-ae63-e06d308c0348" class="">1) 반품 거래 스케일 확인</h3><ul id="18ea0841-2618-809d-b8eb-d7844e4f089d" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8070-8d20-dea90b9b0054" class="code"><code class="language-Python"># 반품 거래 필터
+returns = data[data[&#x27;Sales&#x27;] &lt; 0]
+
+# 분석 대상 제외 대상 필터링
+filter_outs = [&quot;AMAZON FEE&quot;, &quot;Manual&quot;, &quot;Adjust bad debt&quot;, &quot;CRUK Commission&quot;, &quot;Bank Charges&quot;, &quot;Discount&quot;, &quot;SAMPLES&quot;, &quot;POSTAGE&quot;]
+returns_filtered = returns[~returns[&#x27;Description&#x27;].isin(filter_outs)].reset_index(drop=True)
+
+# 전체 반품된 거래 매출액
+print(f&quot;전체 반품 거래액: {round(returns_filtered[&#x27;Sales&#x27;].sum(), 2):,}&quot;)
+print(&#x27;-&#x27;*50, &#x27;\n&#x27;)
+
+# Top 5 품목별 반품 수량
+print(&#x27;Top 5 품목별 반품 수량&#x27;)
+print(returns_filtered.groupby(&#x27;Description&#x27;, as_index=False)[&#x27;Quantity&#x27;].sum().sort_values(by=&#x27;Quantity&#x27;).head())
+print(&#x27;-&#x27;*50, &#x27;\n&#x27;)
+
+# Top 5 품목별 반품 거래액
+print(&#x27;Top 5 품목별 반품 거래액&#x27;)
+print(returns_filtered.groupby(&#x27;Description&#x27;, as_index=False)[&#x27;Sales&#x27;].sum().sort_values(by=&#x27;Sales&#x27;).head())</code></pre></details></li></ul><ul id="18ea0841-2618-8008-96e4-f16d2f2adf38" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8070-bedb-c6178c57084c" class="code"><code class="language-Plain Text">전체 반품 거래액: -478,792.47
+-------------------------------------------------- 
+
+Top 5 품목별 반품 수량
+                              Description  Quantity
+1179          PAPER CRAFT , LITTLE BIRDIE    -80995
+1021       MEDIUM CERAMIC TOP STORAGE JAR    -74494
+1453  ROTATING SILVER ANGELS T-LIGHT HLDR     -9376
+588    FAIRY CAKE FLANNEL ASSORTED COLOUR     -3150
+1228     PINK BLUE FELT CRAFT TRINKET BOX     -2617
+-------------------------------------------------- 
+
+Top 5 품목별 반품 거래액
+                             Description      Sales
+1179         PAPER CRAFT , LITTLE BIRDIE -168469.60
+1021      MEDIUM CERAMIC TOP STORAGE JAR  -77479.64
+1393            REGENCY CAKESTAND 3 TIER   -9722.55
+1881  WHITE HANGING HEART T-LIGHT HOLDER   -6624.30
+588   FAIRY CAKE FLANNEL ASSORTED COLOUR   -6591.42</code></pre></details></li></ul><p id="188a0841-2618-80a0-aff3-c1f482b33225" class="">
+</p><ul id="188a0841-2618-8014-84b7-e7a6f930d950" class="bulleted-list"><li style="list-style-type:disc">온라인 스토어 상에서 이루어진 실제 반품 거래액은 약 $480K 로 전체 거래액 중 4.6 %에 달함</li></ul><ul id="188a0841-2618-805e-83ac-f182b6666e8d" class="bulleted-list"><li style="list-style-type:disc">이는 반품 거래에 대해 더 깊게 분석해보기에 충분히 큰 액수라 판단됨</li></ul><p id="18ba0841-2618-80d8-b70f-cee279cd13b1" class="">
+</p><p id="188a0841-2618-8005-a823-eea54fc4ff5a" class="">
+</p><h3 id="188a0841-2618-803b-8ab7-e02024c8dcff" class="">2) 품목별 반품된 거래 비율</h3><p id="188a0841-2618-80e4-ad04-fa3c869dafcd" class="">: 반품 거래액 상위 10개 품목에 대해 (반품되지 않은 거래 대비) 반품된 거래 비율 탐색</p><ul id="18ea0841-2618-8090-ba28-d47d711ff623" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80fb-bc9f-e6f6d8b67cbd" class="code"><code class="language-Python"># 반품 거래액 기준 순위 매기기
+ranked_descriptions = returns.groupby(&#x27;Description&#x27;)[&#x27;Sales&#x27;].sum().sort_values()
+
+# 반품 거래액 기준 상위 10위 품목
+top10_descriptions = ranked_descriptions.head(10)
+print(&#x27;반품 거래액 기준 상위 10개 품목:&#x27;)
+print(top10_descriptions)
+print(&#x27;-&#x27;*50, &#x27;\n&#x27;)
+
+# (반품X 거래 대비) 반품 거래 비율
+# - 반품X 거래
+positive_sales = data_filtered[data_filtered[&#x27;Sales&#x27;] &gt; 0]
+
+# - 품목별 전체 거래액(매출액)
+total_positive_sales = positive_sales.groupby(&#x27;Description&#x27;)[&#x27;Sales&#x27;].sum()
+
+# - 반품 거래 비율
+return_ratio = top10_descriptions.divide(total_positive_sales).dropna().sort_values()
+
+print(&#x27;반품 거래액 기준 상위 10개 품목에 대해 반품된 거래 비율:&#x27;)
+print(return_ratio)</code></pre></details></li></ul><ul id="18ea0841-2618-808d-a165-eacbab296853" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-808d-972c-f99fc4a3c2a2" class="code"><code class="language-Plain Text">반품 거래액 기준 상위 10개 품목:
+Description
+PAPER CRAFT , LITTLE BIRDIE          -168469.60
+MEDIUM CERAMIC TOP STORAGE JAR        -77479.64
+REGENCY CAKESTAND 3 TIER               -9722.55
+WHITE HANGING HEART T-LIGHT HOLDER     -6624.30
+FAIRY CAKE FLANNEL ASSORTED COLOUR     -6591.42
+PANTRY CHOPPING BOARD                  -4803.06
+DOORMAT FAIRY CAKE                     -4554.90
+GIN + TONIC DIET METAL SIGN            -3775.33
+TEA TIME PARTY BUNTING                 -3692.95
+FELTCRAFT DOLL MOLLY                   -3512.65
+Name: Sales, dtype: float64
+-------------------------------------------------- 
+
+반품 거래액 기준 상위 10개 품목에 대해 반품된 거래 비율:
+Description
+PAPER CRAFT , LITTLE BIRDIE          -1.00
+MEDIUM CERAMIC TOP STORAGE JAR       -0.95
+PANTRY CHOPPING BOARD                -0.82
+FAIRY CAKE FLANNEL ASSORTED COLOUR   -0.36
+FELTCRAFT DOLL MOLLY                 -0.29
+TEA TIME PARTY BUNTING               -0.29
+DOORMAT FAIRY CAKE                   -0.19
+GIN + TONIC DIET METAL SIGN          -0.15
+WHITE HANGING HEART T-LIGHT HOLDER   -0.06
+REGENCY CAKESTAND 3 TIER             -0.06
+Name: Sales, dtype: float64</code></pre><figure id="18ba0841-2618-806d-8f7d-e89db75ba8bf" class="image"><a href="image%203.png"><img style="width:709.9896240234375px" src="images/image%203.png"/></a></figure></details></li></ul><p id="18ba0841-2618-80f1-a763-e16215d76cf1" class="">
+</p><ul id="188a0841-2618-8043-8fe9-c5c9069c03e6" class="bulleted-list"><li style="list-style-type:disc">PAPER CRAFT, LITTLE BIRDIE의 매출이 대규모 반품으로 인해 전부 상쇄됨</li></ul><ul id="188a0841-2618-8040-a0cb-e84af3754ca9" class="bulleted-list"><li style="list-style-type:disc">분석에서 반품 데이터를 제거하는 것이 합리적일 것임<ul id="188a0841-2618-8069-8b39-d6fbbfcbc215" class="bulleted-list"><li style="list-style-type:circle">하지만 추후 반품된 거래에 대해 분석이 필요하다고 판단시 이를 유지할 예정</li></ul><ul id="188a0841-2618-805e-a275-db2ead052eae" class="bulleted-list"><li style="list-style-type:circle">분석을 돕기 위해 음수 매출 항목만 따로 추출한 하위 데이터셋을 생성할 수도 있음</li></ul></li></ul><p id="18aa0841-2618-8086-be0d-d3132af69607" class="">
+</p><p id="18ba0841-2618-80fe-8415-ddcb81be85f6" class="">
+</p><p id="189a0841-2618-80d3-be48-e78c275b8cc5" class="">
+</p><hr id="188a0841-2618-8043-ad0c-f2564c700d78"/><p id="189a0841-2618-809a-b25d-ed95173ad3b2" class="">
+</p><h2 id="188a0841-2618-8008-b022-f649b2541a86" class="">기초 통계량 분석</h2><p id="188a0841-2618-8037-ab17-ddec1ece549f" class="">: 반품 되지 않은 거래에 한하여 기초 통계량을 확인</p><ul id="18ea0841-2618-8055-8571-dad5ff6a6631" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80bd-ba0f-e317aa7adb44" class="code"><code class="language-Python"># 기초 통계량 분석
+# - 반품된 거래는 분석 대상에서 제외
+
+# &#x27;CustomerID&#x27; 칼럼은 문자열 타입으로 변환
+positive_sales[&#x27;CustomerID&#x27;] = positive_sales[&#x27;CustomerID&#x27;].astype(str)
+
+# 수치형 변수 기초통계량
+numeric_summary = positive_sales.drop(columns=[&#x27;InvoiceDate&#x27;]).describe()
+
+# 범주형 변수 기초통계량
+categorical_summary = positive_sales.describe(include=[&#x27;O&#x27;])
+
+print(&#x27;수치형 변수 기초 통계량:&#x27;)
+print(numeric_summary)
+print(&#x27;-&#x27;*50, &#x27;\n&#x27;)
+
+print(&#x27;범주형 변수 기초 통계량:&#x27;)
+print(categorical_summary)
+</code></pre></details></li></ul><ul id="18ea0841-2618-804a-9f36-fe29dd743163" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8057-aa59-c8257381ea5a" class="code"><code class="language-Plain Text">수치형 변수 기초 통계량:
+       Quantity  UnitPrice     Sales
+count 528639.00  528639.00 528639.00
+mean      10.55       3.66     19.83
+std      155.70      17.31    268.88
+min        1.00       0.00      0.00
+25%        1.00       1.25      3.75
+50%        3.00       2.08      9.90
+75%       11.00       4.13     17.70
+max    80995.00    4505.17 168469.60
+-------------------------------------------------- 
+
+범주형 변수 기초 통계량:
+        InvoiceNo StockCode                         Description CustomerID  \
+count      528639    528639                              528639     528639   
+unique      19776      3915                                4020       4335   
+top        573585    85123A  WHITE HANGING HEART T-LIGHT HOLDER        nan   
+freq         1114      2265                                2323     132150   
+
+               Country  
+count           528639  
+unique              38  
+top     United Kingdom  
+freq            484774</code></pre></details></li></ul><p id="188a0841-2618-80f6-ba61-e603362b6d8d" class="">
+</p><p id="188a0841-2618-8020-bc96-f4ea60a91394" class=""><strong>도출 가능한 주요 인사이트</strong></p><ul id="188a0841-2618-8056-a62b-e8949099f900" class="bulleted-list"><li style="list-style-type:disc">평균 판매 금액은 약 $20</li></ul><ul id="188a0841-2618-802e-b021-f9bf8be2178d" class="bulleted-list"><li style="list-style-type:disc">고유한 InvoiceNo는 22,000개 이상</li></ul><ul id="188a0841-2618-800c-abf0-d8c6d203822a" class="bulleted-list"><li style="list-style-type:disc">고유한 StockCode는 4,000개 이상</li></ul><ul id="188a0841-2618-80c7-8783-d4f9c507ebf2" class="bulleted-list"><li style="list-style-type:disc">가장 흔한 CustomerID는 N/A로, 약 135,000건이 전체 데이터의 25%를 차지</li></ul><ul id="188a0841-2618-807e-a433-e55ef6636261" class="bulleted-list"><li style="list-style-type:disc">고유한 국가는 총 38개이며, 이 중 영국은 487,000건 이상으로 전체 데이터의 91.4%를 차지</li></ul><p id="18aa0841-2618-80aa-81a5-f2b40568da07" class="">
+</p><p id="18ba0841-2618-807b-a59e-de5ce1c90950" class="">
+</p><p id="188a0841-2618-80fa-904c-cb697b7d12d2" class="">
+</p><hr id="189a0841-2618-80af-a252-da80ebd2dc5e"/><p id="189a0841-2618-8010-8b87-d006736c6d78" class="">
+</p><h2 id="188a0841-2618-80f2-bd88-c4772afb1d3d" class="">회원 vs 비회원 구매 행동 비교 분석</h2><p id="188a0841-2618-8069-b34b-df33976f89f7" class="">: CustomerID가 N/A인 부분의 거래와 CustomerID가 알려진 거래를 비교 분석</p><p id="188a0841-2618-8083-a0b6-d4c6e6328253" class="">
+</p><h3 id="188a0841-2618-800a-a5a2-e4a8aa7c8ad4" class="">1) InvoiceNo 별 거래액</h3><p id="188a0841-2618-80f4-a85e-f6fccbdb915b" class="">: 한 번 거래시 거래액 기초통계량 비교</p><ul id="18ea0841-2618-80b9-a873-cce85207ae45" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80ff-8a84-c16a504246d6" class="code"><code class="language-Python"># 회원 거래와 비회원 거래 구분
+customer_unknown_df = positive_sales[positive_sales[&#x27;CustomerID&#x27;] == &#x27;nan&#x27;].reset_index(drop=True)
+customer_known_df = positive_sales[positive_sales[&#x27;CustomerID&#x27;] != &#x27;nan&#x27;].reset_index(drop=True)
+
+# InvoiceNo당 거래액 기초통계량 비교
+unknown_sales_summary = customer_unknown_df.groupby(&#x27;InvoiceNo&#x27;)[&#x27;Sales&#x27;].sum().describe()
+known_sales_summary = customer_known_df.groupby(&#x27;InvoiceNo&#x27;)[&#x27;Sales&#x27;].sum().describe()
+
+print(&#x27;비회원 거래 1회당 거래액 기초통계량:&#x27;)
+print(unknown_sales_summary)
+print(&#x27;-&#x27;*50, &#x27;\n&#x27;)
+print(&#x27;회원 거래 1회당 거래액 기초통계량:&#x27;)
+print(known_sales_summary)</code></pre></details></li></ul><ul id="18ea0841-2618-80b4-8f78-cddf181bd228" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80e7-b566-e2e4d5cefaae" class="code"><code class="language-Plain Text">비회원 거래 1회당 거래액 기초통계량:
+count    1371.00
+mean     1244.17
+std      2702.92
+min         0.42
+25%        18.55
+50%       483.35
+75%      1621.80
+max     52940.94
+Name: Sales, dtype: float64
+-------------------------------------------------- 
+
+회원 거래 1회당 거래액 기초통계량:
+count    18405.00
+mean       477.03
+std       1680.69
+min          0.38
+25%        157.90
+50%        302.36
+75%        465.70
+max     168469.60
+Name: Sales, dtype: float64</code></pre></details></li></ul><p id="188a0841-2618-803b-a47c-d599fb7302b0" class="">
+</p><p id="188a0841-2618-800c-918c-c75fb89741d4" class=""><strong>도출 가능한 주요 인사이트</strong></p><ul id="188a0841-2618-801f-8a20-cc54852e77ed" class="bulleted-list"><li style="list-style-type:disc">비회원의 1회 거래당 거래액은 약 $ 1,240, 회원의 1회 거래당 거래액은 약 $ 480 으로 비회원의 1회 거래당 거래액이 약 2.5배 높음</li></ul><ul id="188a0841-2618-80ca-8d0a-e28273eb87f6" class="bulleted-list"><li style="list-style-type:disc">전체 거래량은 회원이 비회원에 비해 약 13배 많은 수준</li></ul><p id="18ba0841-2618-8069-b59a-ef693469ae06" class="">
+</p><p id="188a0841-2618-807b-ac86-c181da1fa7fc" class="">
+</p><h3 id="188a0841-2618-806c-b2a3-f186ac6676fc" class="">2) 전체 거래액 비교</h3><ul id="18ea0841-2618-8048-91b6-dd5b1b03db4c" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8063-9e33-f56d8b14f52a" class="code"><code class="language-Python"># 전체 거래액 비교
+# - 비회원 전체 거래액
+unknown_total_sales = customer_unknown_df[&#x27;Sales&#x27;].sum()
+
+# - 회원 전체 거래액
+known_total_sales = customer_known_df[&#x27;Sales&#x27;].sum()
+
+print(f&#x27;비회원 전체 거래액: {round(unknown_total_sales, 2):,}&#x27;)
+print(f&#x27;회원 전체 거래액: {round(known_total_sales, 2):,}&#x27;)</code></pre></details></li></ul><ul id="18ea0841-2618-80fd-941a-d06b9e4883fe" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8043-86a4-c6f4020e515a" class="code"><code class="language-Python">비회원 전체 거래액: 1,705,759.63
+회원 전체 거래액: 8,779,659.01</code></pre></details></li></ul><p id="188a0841-2618-80bd-8b8a-c52cfd549ada" class="">
+</p><p id="188a0841-2618-8096-a9e3-e45ef2777d5e" class=""><strong>도출 가능한 주요 인사이트</strong></p><ul id="188a0841-2618-80ff-8668-e9b8329b3cbe" class="bulleted-list"><li style="list-style-type:disc">비회원 거래액 대비 회원 거래액은 약 5.1배 수준</li></ul><p id="188a0841-2618-804e-ad2a-f9a4fc26af4c" class="">⇒ 종합해보자면, 비회원 주문은 건당 매출액이 높아 대량 주문의 구매 경향을 보임</p><p id="18ba0841-2618-80c4-ac4b-e67d6d7171f3" class="">
+</p><p id="188a0841-2618-8001-a970-e64bc59a5d6c" class="">
+</p><h3 id="188a0841-2618-80a0-84a5-f2ffdf2e61c9" class="">3) 자주 구매되는 품목 비교</h3><p id="188a0841-2618-80bb-b339-c0d5745eb31f" class="">: 회원과 비회원간 자주 구매하는 품목을 비교</p><ul id="18ea0841-2618-802c-a189-d83dac36096c" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-80e9-acdd-ed1136c46aab" class="code"><code class="language-Python"># 자주 구매되는 품목 비교
+# 1) 비회원 분석
+# - 품목별 판매량
+unknown_quantity = customer_unknown_df.groupby(&#x27;Description&#x27;).size()
+
+# - 품목별 판매 비율
+unknown_quantity_normalized = unknown_quantity / unknown_quantity.sum() * 100
+
+# 2) 회원 분석
+# - 품목별 판매량
+known_quantity = customer_known_df.groupby(&#x27;Description&#x27;).size()
+
+# - 품목별 판매 비율
+known_quantity_normalized = known_quantity / known_quantity.sum() * 100
+
+# 3) 품목별 차이
+# - 비교를 위한 데이터 세트
+comparison_df = pd.DataFrame({
+    &#x27;비회원 구매 비율&#x27;: unknown_quantity_normalized,
+    &#x27;회원 구매 비율&#x27;: known_quantity_normalized
+})
+
+# - 둘 간의 차이 산출
+comparison_df[&#x27;차이&#x27;] = comparison_df[&#x27;비회원 구매 비율&#x27;] - comparison_df[&#x27;회원 구매 비율&#x27;]
+
+# - 차이 Top/Bottom 상위 5개 추출
+top5 = comparison_df.sort_values(by=&#x27;차이&#x27;).head(5)
+bottom5 = comparison_df.sort_values(by=&#x27;차이&#x27;, ascending=False).head(5)
+
+print(&#x27;회원 vs 비회원간 자주 구매되는 품목 비교: \n&#x27;)
+print(pd.concat([top5, bottom5]))</code></pre></details></li></ul><ul id="18ea0841-2618-8016-a955-ca6772f2e237" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="188a0841-2618-8079-8872-c926f3bf7a5a" class="code"><code class="language-Plain Text">회원 vs 비회원간 자주 구매되는 품목 비교: 
+
+                                    비회원 구매 비율  회원 구매 비율    차이(%)
+                                               
+ASSORTED COLOUR BIRD ORNAMENT            0.06            0.35          -0.29
+WHITE HANGING HEART T-LIGHT HOLDER       0.22            0.51          -0.29
+POSTAGE                                  0.02            0.28          -0.26
+REX CASH+CARRY JUMBO SHOPPER             0.01            0.24          -0.23
+REGENCY CAKESTAND 3 TIER                 0.22            0.43          -0.21
+
+DOTCOM POSTAGE                           0.52            0.00           0.52
+SUKI  SHOULDER BAG                       0.25            0.05           0.20
+SKULL SHOULDER BAG                       0.20            0.04           0.17
+JUMBO BAG WOODLAND ANIMALS               0.28            0.13           0.16
+RECYCLING BAG RETROSPOT                  0.26            0.10           0.15</code></pre></details></li></ul><p id="188a0841-2618-8072-b405-cfd3d9fb34ce" class="">
+</p><p id="188a0841-2618-800b-a453-e34e300261bb" class=""><strong>분석 방법</strong><div class="indented"><ul id="188a0841-2618-804d-b13a-f12d96c5b201" class="bulleted-list"><li style="list-style-type:disc">회원과 비회원 데이터 세트에 대하여 품목별 구매된 빈도가 얼마나 많은지를 비교</li></ul><ul id="188a0841-2618-8083-bd43-e7c7b1498268" class="bulleted-list"><li style="list-style-type:disc">표준화 처리하여 차이 계산</li></ul></div></p><p id="188a0841-2618-8052-ba46-efa12c8f9950" class="">
+</p><p id="188a0841-2618-80be-b1ee-c7934915b857" class=""><strong>차이 크기 비교</strong><div class="indented"><ul id="188a0841-2618-8010-a57b-eb7b322619b4" class="bulleted-list"><li style="list-style-type:disc">둘 간의 차이가 (-) 값이 클 수록 회원에 의해서만 구매된 품목임</li></ul><ul id="188a0841-2618-8044-b1f9-f31e4ed75ccd" class="bulleted-list"><li style="list-style-type:disc">둘 간의 차이가 (+) 값이 클 수록 비회원에 의해서만 구매품목임</li></ul></div></p><p id="188a0841-2618-8038-ae05-cd71086c02b9" class="">
+</p><div id="188a0841-2618-80ce-a978-ffda8091add4" class="column-list"><div id="188a0841-2618-80a7-aedf-d63aea096fa5" style="width:50%" class="column"><p id="188a0841-2618-80b3-adc4-f725c229c979" class=""><strong>회원에 의해 주로 구매된 품목</strong><div class="indented"><ul id="188a0841-2618-8031-89c3-c59ec91657ff" class="bulleted-list"><li style="list-style-type:disc">ASSORTED COLOUR BIRD ORNAMENT</li></ul><ul id="188a0841-2618-80df-93fd-e562bb3603db" class="bulleted-list"><li style="list-style-type:disc">WHITE HANGING HEART T-LIGHT HOLDER</li></ul><ul id="188a0841-2618-80ee-894e-f8cf215eb316" class="bulleted-list"><li style="list-style-type:disc">POSTAGE</li></ul><p id="188a0841-2618-80ef-bfbf-d6535f83303c" class="">
+</p></div></p></div><div id="188a0841-2618-801f-9595-cc300ee34611" style="width:50%" class="column"><p id="188a0841-2618-80ec-8c91-c5674f9e3af9" class=""><strong>비회원에 의해 주로 구매된 품목</strong><div class="indented"><ul id="188a0841-2618-804d-9539-e374dc1a7648" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-red"><strong>DOTCOM POSTAGE</strong></mark></li></ul><ul id="188a0841-2618-80a6-8132-e7a070d265c8" class="bulleted-list"><li style="list-style-type:disc">SUKI  SHOULDER BAG</li></ul><p id="188a0841-2618-8010-be54-f10e23531c2e" class="">
+</p></div></p></div></div><blockquote id="188a0841-2618-8099-8aee-c2252ee26888" class="">그런데 이 중 “<mark class="highlight-red"><strong>DOTCOM POSTAGE</strong></mark>” 품목은 나머지 품목과는 달리 거의 비회원에 의해서만 구매되었음을 확인할 수 있었음<br/>→ 이에 대한 심층 분석 필요를 느낌<br/></blockquote><p id="18ba0841-2618-8011-8c91-d50ea54e1d11" class="">
+</p><figure id="18ba0841-2618-80a1-b92f-daa671db93c8" class="image"><a href="image%204.png"><img style="width:912px" src="images/image%204.png"/></a></figure><p id="18aa0841-2618-807e-bc0d-e0963956812e" class="">
+</p><p id="188a0841-2618-8042-af96-c9743b696295" class="">전체 품목별 거래액 중 <mark class="highlight-red"><strong>DOTCOM POSTAGE</strong></mark>가 가장 높은 거래액을 기록</p><p id="188a0841-2618-802d-b6af-c27938fa15f7" class="">⇒ 그렇다면 비회원들은 왜 DOTCOM POSTAGE 제품을 그리도 많이 구매했을까? 궁금…</p><p id="188a0841-2618-8026-9be6-d72dec834462" class="">
+</p><p id="18ba0841-2618-800e-82a7-c965ffa4ba46" class="">
+</p><h3 id="18ba0841-2618-8002-a2b9-f37d0d7b24c0" class="">4) 반품 비율 차이</h3><p id="18ba0841-2618-8014-8d73-fb439db56c39" class="">: 회원, 비회원 여부별 전체 거래액 중 반품된 거래액 비율 차이 확인</p><ul id="18ea0841-2618-80ad-b910-dbf2062df03a" class="toggle"><li><details><summary>(코드 보기)</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="18ba0841-2618-801e-a6a3-db1b856d2822" class="code"><code class="language-Python"># 회원/비회원 구분
+data_filtered[&#x27;CustomerID_yn&#x27;] = np.where(data_filtered[&#x27;CustomerID&#x27;].isna(), &#x27;비회원&#x27;, &#x27;회원&#x27;)
+
+# 반품된 거래액 계산 (반품 거래는 음수이므로 절댓값 변환)
+data_filtered[&#x27;return_sales&#x27;] = np.where(data_filtered[&#x27;Sales&#x27;] &lt; 0, -data_filtered[&#x27;Sales&#x27;], 0)
+
+# 회원 여부별 전체 거래액 (반품 포함)
+total_sales_by_customerGroup = data_filtered.groupby(&#x27;CustomerID_yn&#x27;)[&#x27;Sales&#x27;].sum()
+
+# 회원 여부별 반품된 거래액 합계
+return_sales_by_customerGroup = data_filtered.groupby(&#x27;CustomerID_yn&#x27;)[&#x27;return_sales&#x27;].sum()
+
+# 반품율 계산 (반품 거래액 / 전체 거래액)
+return_ratio_comparison = return_sales_by_customerGroup.divide(total_sales_by_customerGroup)
+
+# 결과 출력
+print(&#x27;회원 여부별 반품율 비교: &#x27;)
+print(return_ratio_comparison)</code></pre></details></li></ul><ul id="18ea0841-2618-8000-b611-f6adb296d2a9" class="toggle"><li><details open=""><summary>출력 결과</summary><script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js" integrity="sha512-7Z9J3l1+EYfeaPKcGXu3MS/7T+w19WtKQY/n+xzmw4hZhJ9tyYmcUS+4QqAlzhicE5LAfMQSF3iFTK9bQdTxXg==" crossorigin="anonymous" referrerPolicy="no-referrer"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism.min.css" integrity="sha512-tN7Ec6zAFaVSG3TpNAKtk4DOHNpSwKHxxrsiw4GHKESGPs5njn/0sMCUMl2svV4wo4BK/rCP7juYz+zx+l6oeQ==" crossorigin="anonymous" referrerPolicy="no-referrer"/><pre id="18ba0841-2618-8060-9d2c-dbacaf800b87" class="code"><code class="language-Plain Text">회원 여부별 반품율: 
+- 비회원   0.0030
+- 회원    0.0548
+</code></pre></details></li></ul><p id="18ba0841-2618-8090-88ca-ef18df7f9f0c" class="">⇒ 회원과 비회원 간 반품 비율에 뚜렷한 차이가 나타남. 비회원 주문의 반품 비율은 전체 거래액의 약 0.3%에 불과한 반면, 회원 주문의 반품 비율은 약 5.5%로 상대적으로 높은 수준을 보임</p><p id="18ba0841-2618-801d-8e53-e232ca1018f2" class="">
+</p><p id="18ba0841-2618-80b0-85e9-ee82367a4099" class="">
+</p><p id="18aa0841-2618-8021-a9bc-fc201795f13d" class="">
+</p><hr id="188a0841-2618-8030-8164-fcbf9f051490"/><p id="18aa0841-2618-8032-886b-ff27a1d1fdc0" class="">
+</p><h2 id="188a0841-2618-8073-9f0c-e680332792ad" class="">인기 제품 분석</h2><p id="188a0841-2618-80f8-8eac-d220c87e7878" class="">: 인기 제품(매출액 기준 상위 10개 제품)에 대한 구매 지역별, 고객별 분석 수행</p><p id="18aa0841-2618-8023-aa22-d4460377fdc5" class="">
+</p><h3 id="18aa0841-2618-8018-8870-dd06194bfb89" class="">1) 구매 지역별 분석</h3><figure id="18aa0841-2618-8068-b37b-e05f55ee7a16" class="image"><a href="image%205.png"><img style="width:912px" src="images/image%205.png"/></a><figcaption>Tableau로 제작</figcaption></figure><ul id="18aa0841-2618-8023-8df4-fc71a44ad260" class="bulleted-list"><li style="list-style-type:disc">앞서 살펴보았듯이 전체 거래의 91%는 영국에서 발생되었음</li></ul><ul id="18aa0841-2618-8098-8eb4-f3174898ab57" class="bulleted-list"><li style="list-style-type:disc">영국에서 대부분 판매되는 제품(Domestic) vs 해외 판매 비중이 높은 제품으로 구분 가능성 확인 <ul id="18aa0841-2618-80f1-a124-dfbfb95b1678" class="bulleted-list"><li style="list-style-type:circle">일부 제품은 해외 매출 비중이 매우 높음</li></ul></li></ul><p id="18ba0841-2618-80c7-9df5-d1056f30e355" class="">
+</p><p id="18aa0841-2618-80fd-8e85-ce5585c12b87" class="">
+</p><h3 id="18aa0841-2618-809b-8203-cfaeff8a46ad" class="">2) 고객별(CustomerID) 분석</h3><figure id="18aa0841-2618-8089-b384-ffb62c00899b" class="image"><a href="image%206.png"><img style="width:912px" src="images/image%206.png"/></a><figcaption>Tableau로 제작</figcaption></figure><ul id="18aa0841-2618-80c6-84c9-f07ceb4545b9" class="bulleted-list"><li style="list-style-type:disc"><mark class="highlight-blue_background"><strong>파란색</strong></mark>으로 표시된 부분이 Customer ID가 식별되지 않은 비회원</li></ul><ul id="18aa0841-2618-8014-9750-cb75bd2c920a" class="bulleted-list"><li style="list-style-type:disc">일부 제품의 경우 특정 고객에 의해 대량으로 구매되었음을 알 수 있음<ul id="18aa0841-2618-8053-aa63-df6918343eac" class="bulleted-list"><li style="list-style-type:circle">도매상에 의해서 대량으로 구매되었을 것으로 추측</li></ul></li></ul><p id="18aa0841-2618-80a1-ae41-f7333bb7b037" class="">
+</p><p id="18aa0841-2618-801b-98ab-cf55d4cfe664" class="">
+</p><hr id="18aa0841-2618-8060-b3c2-c3eba6291b97"/><p id="18aa0841-2618-803e-8f45-d02fd4ce0299" class=""> </p><h2 id="18aa0841-2618-8009-ac91-c85568fec3ff" class="">인기제품 시계열 분석</h2><p id="18aa0841-2618-8072-acf9-ff05ff1e3061" class="">: 국내(영국)과 해외의 시간의 따른 인기 제품(상위 매출액 10위 제품) 의 변화를 추적</p><p id="18aa0841-2618-80a3-b47b-fd6ae1ccb1a2" class="">
+</p><h3 id="18aa0841-2618-80f8-b5de-ee0dcb84e953" class="">국내(영국) 인기 제품 변화</h3><figure id="18aa0841-2618-80b3-8b33-e1104e36f1b9" class="image"><a href="image%207.png"><img style="width:864px" src="images/image%207.png"/></a><figcaption>Tableau로 제작</figcaption></figure><p id="18ba0841-2618-8026-a822-ea29af338d3f" class="">
+</p><p id="18aa0841-2618-8060-b33e-d64b82f79cae" class="">
+</p><h3 id="18aa0841-2618-806e-918e-c7cf31dea2e2" class="">해외 인기 제품 변화</h3><figure id="18aa0841-2618-802b-a046-c5610b88c88c" class="image"><a href="image%208.png"><img style="width:864px" src="images/image%208.png"/></a><figcaption>Tableau로 제작</figcaption></figure><p id="18aa0841-2618-8003-9662-c4eaa3921eda" class="">
+</p><p id="18aa0841-2618-80ff-8e61-ff281d31b730" class=""><strong>도출 가능한 주요 인사이트</strong></p><ul id="18aa0841-2618-802f-b16e-fce609b0a44d" class="bulleted-list"><li style="list-style-type:disc">시기별로 인기 제품의 주요 변화를 확인</li></ul><ul id="18aa0841-2618-8080-af6b-cffce8a9aaf9" class="bulleted-list"><li style="list-style-type:disc"><strong>RABBIT NIGHT LIGHT</strong> 제품은 2011년 5월 부터 인기 제품 리스트에 올랐으며 해외에서 먼저 반응을 보이다가 매출 증가 확인<ul id="18aa0841-2618-80cc-88b6-ea402ccbf232" class="bulleted-list"><li style="list-style-type:circle">이후 국내(영국)에서 2011년 11월에 매출이 큰 폭으로 증가</li></ul></li></ul><ul id="18aa0841-2618-8097-a412-f193c0e3b98a" class="bulleted-list"><li style="list-style-type:disc">앞서 살펴보았듯이 <strong>POSTAGE</strong> 제품은 국내 보다는 해외에서 꾸준한 인기를 얻고있음</li></ul><p id="18aa0841-2618-80a4-97b7-d71369a24cb2" class="">
+</p><p id="18ba0841-2618-80c4-a10b-edc10f0af5b9" class="">
+</p><p id="18aa0841-2618-8033-b137-e16733779841" class="">
+</p><hr id="18aa0841-2618-80ea-8b71-d6a60ed8eb81"/><p id="18aa0841-2618-80b4-aa42-d63ec538a2ab" class="">
+</p><h2 id="18aa0841-2618-80a3-ac31-d027b844fea3" class="">반품 비율 추이</h2><p id="18aa0841-2618-8007-9f1b-d7998859417d" class="">: 시기별로 전체 거래액 대비 반품된 거래액 비율을 추적</p><p id="18aa0841-2618-808b-816d-dece613bb73d" class=""> </p><figure id="18aa0841-2618-803d-b120-d5d13a22b77b" class="image"><a href="image%209.png"><img style="width:816px" src="images/image%209.png"/></a><figcaption>Tableau로 제작</figcaption></figure><ul id="18aa0841-2618-8079-8584-e3ee5c3fc540" class="bulleted-list"><li style="list-style-type:disc">전체 기간 동안 평균 반품율은 약 3.8% 이나 시기에 따라 반품율이 치솟는 시점이 존재</li></ul><ul id="18aa0841-2618-8056-812b-e3aabf4defe7" class="bulleted-list"><li style="list-style-type:disc">특정 시기에 반품율이 높다는 것은 비즈니스 상에 어떤 문제가 발생했다는 시그널로 이에 대한 추가분석이 필요할 것으로 보임 <ul id="18aa0841-2618-80ae-8abb-e1953b966c46" class="bulleted-list"><li style="list-style-type:circle">하지만 이에 대한 심화 분석은 추후 분석 과제로 남겨둘 예정</li></ul></li></ul><p id="18ba0841-2618-803b-a744-ef5159b55c80" class="">
+</p><p id="18ba0841-2618-8087-ba14-c1c607af89cf" class="">
+</p><p id="18ba0841-2618-8026-a60f-ec03e5edc75f" class="">
+</p><h1 id="18ba0841-2618-80a9-b15d-fa118a125988" class="block-color-blue_background">  비즈니스 제언</h1><h3 id="18ba0841-2618-80b7-b852-d7ac7b51bb7c" class="">반품된 거래</h3><ul id="18ba0841-2618-80da-9760-c7f33409019e" class="bulleted-list"><li style="list-style-type:disc">일부 제품은 반품율이 매우 높게 나타나는데, 이에 대한 추가적인 분석을 통해 원인을 파악하고 시정할 필요가 있음</li></ul><ul id="18ba0841-2618-8059-b5f3-ce097461cf5b" class="bulleted-list"><li style="list-style-type:disc">또한, 반품율이 치솟는 시점이 존재하는데 이를 해결해야 할 ‘문제’라고 인식하고 원인을 식별하고 대처 방안 마련</li></ul><p id="18ba0841-2618-80df-8f72-c42204834051" class="">
+</p><h3 id="18ba0841-2618-802d-8a4d-c42fca945725" class="">매출 양상</h3><ul id="18ba0841-2618-801a-852e-ee34d5da15ac" class="bulleted-list"><li style="list-style-type:disc">국내 매출과 해외 매출의 양상은 일부 차이를 보임</li></ul><ul id="18ba0841-2618-8083-8ac0-efe94417ff89" class="bulleted-list"><li style="list-style-type:disc">지역별 인기 제품, 성수기(매출 증가 시기)에 대하여 이해하고, 이에 대한 Supply Chain에 대한 점검 필요  </li></ul><p id="18ba0841-2618-80d9-9cd5-c33912faa557" class="">
+</p><h3 id="18ba0841-2618-8067-b4ff-f54ecaf4523b" class="">고객</h3><ul id="18ba0841-2618-8046-9a37-f5334c899dde" class="bulleted-list"><li style="list-style-type:disc">일부 고객은 대량 구매를 기반으로 한 도매업자일 가능성이 높으며, 이들은 장기적인 거래 유지가 중요한 핵심 고객이 될 수 있음.<ul id="18ba0841-2618-805f-b435-e78ac346b8b1" class="bulleted-list"><li style="list-style-type:circle">이러한 고객을 대상으로 대량 구매 시 추가 할인 정책을 도입하는 방안을 고려할 필요가 있음</li></ul></li></ul><p id="18ba0841-2618-8091-b018-e44a33b8c124" class="">
+</p></div></article><span class="sans" style="font-size:14px;padding-top:2em"></span></body></html>
